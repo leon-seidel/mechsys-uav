@@ -40,6 +40,12 @@ class UAV():
         async for attitude_euler in self.__system.telemetry.attitude_euler():
             self.pitch, self.roll, self.heading = attitude_euler.pitch_deg, attitude_euler.roll_deg, attitude_euler.yaw_deg
 
+    def get_position(self):
+        return self.latitude, self.longitude, self.relative_altitude
+
+    def get_attitude(self):
+        return self.pitch, self.roll, self.heading
+
     async def wait_for_connection(self, serial_device, serial_baud, use_sim):
         if use_sim:
             system_address = "udp://:14540"

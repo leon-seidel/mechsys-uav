@@ -10,15 +10,9 @@ The setup part of this README is required for preparing the Raspberry Pi and fli
 
 ## Setup
 ### Install 
-Install these dependencies:
+Install with:
 ```sh
-pip install mavsdk
-pip install shapely
-```
-Then clone this repo, and colcon build it:
-```sh
-git clone https://github.com/leon-seidel/mechsys.git
-cd mechsys
+pip install git+https://github.com/leon-seidel/mechsys_uav.git
 ```
 
 Allow UART/USB port communication with `sudo usermod -a -G dialout $USER`. 
@@ -54,6 +48,11 @@ You can also query the position coordinates and relative altitude above takeoff/
 uav.latitude, uav.longitude, uav.relative_altitude
 ```
 
+To arm and takeoff the UAV to a given relative takeoff altitude use:
+```py
+goal_accepted = await uav.arm_and_takeoff(takeoff_altitude=2)
+```
+
 To send a goal position to the UAV specify a latitude, longitude and relative altitude above takeoff/home position in m: 
 ```py
 goal_accepted = await uav.send_goal_position(latitude=37.413240, longitude=-121.999524, relative_altitude=8)
@@ -64,3 +63,8 @@ This will return `True` if the goal was accepted before sending a command to the
 goal_accepted = await uav.send_goal_position(latitude=37.413240, longitude=-121.999524, relative_altitude=8, heading=11)
 ```
 The heading is used directly, which means that the UAV first turns to the desired heading and then proceeds to the goal position or altitude keeping the heading.
+
+To land the UAV use:
+```py
+goal_accepted = await uav.land()
+```

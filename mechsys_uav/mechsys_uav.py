@@ -68,7 +68,7 @@ class UAV():
             break
     
     async def arm_and_takeoff(self, takeoff_altitude: float|int=2):
-        """Arm and takeoff UAV to `takeoff_altitude`"""
+        """Arm and takeoff UAV to `takeoff_altitude` (over ground, in meters)"""
         if takeoff_altitude > self._max_relative_altitude:
             print(f"Takeoff altitude higher than the allowed {self._max_relative_altitude:.1f} m.")
             return False

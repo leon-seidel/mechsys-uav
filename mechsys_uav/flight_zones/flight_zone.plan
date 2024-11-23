@@ -1,0 +1,54 @@
+{
+    "fileType": "Plan",
+    "geoFence": {
+        "circles": [
+        ],
+        "polygons": [
+            {
+                "inclusion": true,
+                "polygon": [
+                    [
+                        37.41379235125783,
+                        -122.00101149683204
+                    ],
+                    [
+                        37.413613256088084,
+                        -121.99747758050688
+                    ],
+                    [
+                        37.411687956046464,
+                        -121.9974838439582
+                    ],
+                    [
+                        37.4113347302511,
+                        -121.99992792011597
+                    ]
+                ],
+                "version": 1
+            }
+        ],
+        "version": 2
+    },
+    "groundStation": "QGroundControl",
+    "mission": {
+        "cruiseSpeed": 15,
+        "firmwareType": 12,
+        "globalPlanAltitudeMode": 1,
+        "hoverSpeed": 1,
+        "items": [
+        ],
+        "plannedHomePosition": [
+            null,
+            null,
+            null
+        ],
+        "vehicleType": 2,
+        "version": 2
+    },
+    "rallyPoints": {
+        "points": [
+        ],
+        "version": 2
+    },
+    "version": 1
+}

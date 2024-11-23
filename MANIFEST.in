@@ -1,0 +1,6 @@
+# Include files in specific directories
+recursive-include mechsys_uav/flight_zones *.plan
+
+# Include additional files at the root level
+include README.md
+include LICENSE

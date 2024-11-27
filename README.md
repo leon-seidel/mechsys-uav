@@ -68,3 +68,9 @@ To land the UAV use:
 ```py
 goal_accepted = await uav.land()
 ```
+
+## TODO:
+- Check flight mode for Hold: document
+- Check flight zone before takeoff
+- Try UART on Pi
+- 

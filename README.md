@@ -12,7 +12,7 @@ The setup part of this README is required for preparing the Raspberry Pi and fli
 ### Install 
 Install with:
 ```sh
-pip install git+https://github.com/leon-seidel/mechsys_uav.git
+pip install git+https://github.com/leon-seidel/mechsys-uav.git
 ```
 
 Allow UART/USB port communication with `sudo usermod -a -G dialout $USER`. 

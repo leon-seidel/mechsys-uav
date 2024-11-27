@@ -4,6 +4,7 @@ import asyncio
 from importlib.resources import files
 from shapely.geometry import Point, Polygon
 from mavsdk import System
+from mavsdk.telemetry import FlightMode
 
 class UAV():
     def __init__(self):
@@ -16,6 +17,7 @@ class UAV():
         self.latitude, self.longitude, self.relative_altitude = None, None, None
         self.pitch, self.roll, self.heading = None, None, None
         self.home_altitude = None
+        self.flight_mode_is_hold = False
 
         # Load fligth zone
         self._flight_zone = self.load_fligth_zone()
@@ -30,6 +32,7 @@ class UAV():
         await self.wait_for_home()
         self._update_position_task = asyncio.create_task(self._update_position())
         self._update_attitude_task = asyncio.create_task(self._update_attitude())
+        self._update_flight_mode_task = asyncio.create_task(self._update_flight_mode())
         return self
 
     async def _update_position(self):
@@ -39,6 +42,13 @@ class UAV():
     async def _update_attitude(self):
         async for attitude_euler in self.__system.telemetry.attitude_euler():
             self.pitch, self.roll, self.heading = attitude_euler.pitch_deg, attitude_euler.roll_deg, attitude_euler.yaw_deg
+
+    async def _update_flight_mode(self):
+        async for flight_mode in self.__system.telemetry.flight_mode():
+            if flight_mode is FlightMode.HOLD:
+                self.flight_mode_is_hold = True
+            else:
+                self.flight_mode_is_hold = False
 
     def get_position(self):
         return self.latitude, self.longitude, self.relative_altitude
@@ -79,6 +89,10 @@ class UAV():
             print(f"Takeoff altitude higher than the allowed {self._max_relative_altitude:.1f} m.")
             return False
         
+        if not self.flight_mode_is_hold:
+            print("Rejected takeoff: Not in flight mode Hold.")
+            return False
+
         try:
             await self.__system.action.set_takeoff_altitude(takeoff_altitude)
             print("Arming")
@@ -111,7 +125,7 @@ class UAV():
         else:
             heading = float(heading)
         # Build command if goal is allowed
-        if position_allowed and altitude_allowed and self.home_altitude is not None: 
+        if self.flight_mode_is_hold and position_allowed and altitude_allowed and self.home_altitude is not None: 
             try:
                 await self.__system.action.goto_location(latitude, longitude, self.home_altitude + relative_altitude, heading)
                 print("Position sent to UAV.")
@@ -123,6 +137,8 @@ class UAV():
             print("No home position yet.")
             return False
         else:
+            if not self.flight_mode_is_hold:
+                print("Rejected: Not in flight mode Hold.")
             if not position_allowed:
                 print("Rejected: Position not in flight zone.")
             if not altitude_allowed:

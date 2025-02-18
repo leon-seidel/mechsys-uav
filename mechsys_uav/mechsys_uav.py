@@ -16,6 +16,7 @@ class UAV():
         # Init flight variables
         self.latitude, self.longitude, self.relative_altitude = None, None, None
         self.pitch, self.roll, self.heading = None, None, None
+        self.is_armed = None
         self.home_altitude = None
         self.flight_mode_is_hold = False
 
@@ -33,6 +34,7 @@ class UAV():
         self._update_position_task = asyncio.create_task(self._update_position())
         self._update_attitude_task = asyncio.create_task(self._update_attitude())
         self._update_flight_mode_task = asyncio.create_task(self._update_flight_mode())
+        self._update_arm_state_task = asyncio.create_task(self._update_arm_state())
         return self
 
     async def _update_position(self):
@@ -49,6 +51,10 @@ class UAV():
                 self.flight_mode_is_hold = True
             else:
                 self.flight_mode_is_hold = False
+
+    async def _update_arm_state(self):
+        async for arm_state in self.__system.telemetry.armed():
+            self.is_armed = arm_state
 
     def get_position(self):
         return self.latitude, self.longitude, self.relative_altitude
@@ -85,6 +91,18 @@ class UAV():
     
     async def arm_and_takeoff(self, takeoff_altitude: float|int=2):
         """Arm and takeoff UAV to `takeoff_altitude` (over ground, in meters)"""
+        if self.is_armed is None:
+            print("Rejected takeoff: No arm status available.")
+            return False
+        
+        if self.is_armed is True:
+            print("Rejected takeoff: UAV is already armed.")
+            return False
+
+        if self.home_altitude is None:
+            print("Rejected takeoff: No home altitude yet.")
+            return False
+
         if takeoff_altitude > self._max_relative_altitude:
             print(f"Takeoff altitude higher than the allowed {self._max_relative_altitude:.1f} m.")
             return False
@@ -106,6 +124,10 @@ class UAV():
 
     async def land(self):
         """Land UAV"""
+        if not self.flight_mode_is_hold:
+            print("Rejected landing: Not in flight mode Hold.")
+            return False
+
         try:
             print("Landing")
             await self.__system.action.land()

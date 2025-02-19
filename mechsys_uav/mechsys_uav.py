@@ -64,13 +64,13 @@ class UAV():
 
     async def wait_for_connection(self, serial_device, serial_baud, use_sim):
         if use_sim:
-            system_address = "udp://:14540"
+            system_address = "udp://:14541"
         else:
             system_address = f"serial:///{serial_device}:{serial_baud}"
         
-        await self.__system.connect(system_address=system_address)
-
         print("Waiting for UAV to connect...")
+        await self.__system.connect(system_address=system_address)
+        
         async for state in self.__system.core.connection_state():
             if state.is_connected:
                 print(f"Connected to UAV!\n")

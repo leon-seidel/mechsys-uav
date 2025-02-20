@@ -1,12 +1,10 @@
 import base64
+import threading
 import cv2
 import numpy as np
 import subprocess
 import json
-
-from ultralytics import YOLO
-
-model = YOLO("yolo11n.pt")
+import detector
 
 def read_camera_frames():
     # Start the gz topic process
@@ -35,19 +33,32 @@ def read_camera_frames():
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
             img = cv2.resize(img, (320, 240))
-            
-            model.predict(source=img, show=True)
-            
-            # if img is not None:
-            #     cv2.imshow('feed', img)
-            #     if cv2.waitKey(1) & 0xFF == ord('q'):
-            #         break
+            yield img
 
 
-# Usage example:
-try:
-    read_camera_frames()
-except KeyboardInterrupt:
-    print("Stopping camera feed...")
-finally:
-    cv2.destroyAllWindows()
+class GZCamera:
+    def __init__(self):
+        self._stop_event = threading.Event()
+        self._latest_image = None
+        self._thread = None
+
+    def _camera_loop(self):
+        for img in read_camera_frames():
+            self._latest_image = img
+            cv2.imshow('frame', img)
+            cv2.waitKey(1)
+            if self._stop_event.is_set():
+                break
+
+    def start(self):
+        self._thread = threading.Thread(target=self._camera_loop, daemon=True)
+        self._thread.start()
+
+    def stop(self):
+        self._stop_event.set()
+        if self._thread is not None:
+            self._thread.join()
+
+    def get_latest(self):
+        return self._latest_image
+

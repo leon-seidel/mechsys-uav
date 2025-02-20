@@ -2,6 +2,8 @@ import asyncio
 import numpy as np
 from mechsys_uav import UAV
 import haversine
+from gz_cam import GZCamera
+import detector
 
 class PIController:
     def __init__(self, kp, ki, dt):
@@ -23,27 +25,34 @@ class PIController:
         return setpoint_x, setpoint_y
 
 
-async def run_mission(controller, uav, flight_altitude):
+async def run_mission(controller, uav, camera, flight_altitude):
 
     while True:
         # Get current position
         current_position = uav.get_position()
 
         # Get current frame
-        frame = get_frame()
+        frame = camera.get_latest()
 
         # Run detection
-        tag_position = run_detection(frame)
+        _, center_position = detector.detect_red_cross(frame)
+        if center_position is None:
+            print("Cross not found. Hovering.")
+            await asyncio.sleep(0.1)
+            continue
 
+        error_x, error_y = (center_position[0] - 160, 120 - center_position[1])
+        print(f"Error: {error_x:.2f}, {error_y:.2f}")
         # Calculate error in x and y directions
-        error_x = tag_position[0] - current_position[0]
-        error_y = tag_position[1] - current_position[1]
+        # error_x = tag_position[0] - current_position[0]
+        # error_y = tag_position[1] - current_position[1]
 
         # Update the controller with the current errors to get the setpoints
-        setpoint_x, setpoint_y = controller.update(error_x, error_y)
+        setpoint_x, setpoint_y = controller.update(error_y, error_x)
 
         # Fly to the setpoint
         await fly_to_relative_position(uav=uav, rel_position_x=setpoint_x, rel_position_y=setpoint_y, relative_altitude=flight_altitude, wait_for_arrival=False)
+        await asyncio.sleep(0.1)
 
 def get_abs_distance(position1, position2):
     return haversine.haversine(position1[0:2], position2[0:2], unit=haversine.Unit.METERS)
@@ -60,6 +69,7 @@ async def takeoff(uav, takeoff_altitude=2.0, vertical_uncertainity=0.2):
         if altitude >= (takeoff_altitude - vertical_uncertainity):
             print("Reached takeoff altitude.")
             break
+    return accepted
 
 
 async def fly_to_relative_position(uav, rel_position_x, rel_position_y=0.0, relative_altitude=2.0, horizontal_uncertainity=0.2, wait_for_arrival=True):
@@ -86,12 +96,14 @@ async def fly_to_relative_position(uav, rel_position_x, rel_position_y=0.0, rela
 async def main():
     # Connect to UAV (simulator mode)
     uav = await UAV.connect(use_sim=True)
+    camera = GZCamera()
+    camera.start()
 
     # Create an instance of the PIController
-    controller = PIController(kp=1.0, ki=0.1, dt=0.1)
+    controller = PIController(kp=0.015, ki=0.001, dt=0.1)
 
-    flight_altitude = 2.0
-    veritcal_uncertainity = 0.2
+    flight_altitude = 3.0
+    vertical_uncertainity = 0.3
 
     # Wait for connection
     await asyncio.sleep(2)
@@ -99,14 +111,20 @@ async def main():
     # Print initial position and attitude
     print("Initial position:", uav.get_position())
     
-    # Takeoff to 2.0 m altitude
-    await takeoff(uav, takeoff_altitude=flight_altitude, vertical_uncertainity=veritcal_uncertainity)
-    
+    # Takeoff
+    while True:
+        success = await takeoff(uav, takeoff_altitude=flight_altitude, vertical_uncertainity=vertical_uncertainity)
+        if success:
+            break
+        else:
+            print("Takeoff failed. Retrying...")
+            await asyncio.sleep(1)
+
     # Hover for 2 seconds
     await asyncio.sleep(2)
 
     # Run the mission
-    run_mission(controller, uav, flight_altitude)
+    await run_mission(controller, uav, camera, flight_altitude)
 
     # Hover for 2 seconds
     await asyncio.sleep(2)

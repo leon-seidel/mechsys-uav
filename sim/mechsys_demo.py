@@ -4,32 +4,15 @@ from mechsys_uav import UAV
 import haversine
 from gz_cam import GZCamera
 import detector
-
-class PIController:
-    def __init__(self, kp, ki, dt):
-        self.kp = kp
-        self.ki = ki
-        self.dt = dt
-        self.integral_x = 0.0
-        self.integral_y = 0.0
-
-    def update(self, error_x, error_y):
-        # Update the integral terms
-        self.integral_x += error_x * self.dt
-        self.integral_y += error_y * self.dt
-
-        # Compute the control output (setpoint) using both proportional and integral terms
-        setpoint_x = self.kp * error_x + self.ki * self.integral_x
-        setpoint_y = self.kp * error_y + self.ki * self.integral_y
-
-        return setpoint_x, setpoint_y
+from pi_controller import PIController 
+from localizer import pixel_to_ground
 
 
 async def run_mission(controller, uav, camera, flight_altitude):
 
     while True:
         # Get current position
-        current_position = uav.get_position()
+        current_altitude = uav.get_position()[2]
 
         # Get current frame
         frame = camera.get_latest()
@@ -40,15 +23,13 @@ async def run_mission(controller, uav, camera, flight_altitude):
             print("Cross not found. Hovering.")
             await asyncio.sleep(0.1)
             continue
-
-        error_x, error_y = (center_position[0] - 160, 120 - center_position[1])
-        print(f"Error: {error_x:.2f}, {error_y:.2f}")
+        
         # Calculate error in x and y directions
-        # error_x = tag_position[0] - current_position[0]
-        # error_y = tag_position[1] - current_position[1]
+        error_x, error_y = pixel_to_ground(center_position[0], center_position[1], current_altitude)
+        print(f"  PI Controller Error: {error_x:.2f}, {error_y:.2f}")
 
         # Update the controller with the current errors to get the setpoints
-        setpoint_x, setpoint_y = controller.update(error_y, error_x)
+        setpoint_x, setpoint_y = controller.update(error_x, error_y)
 
         # Fly to the setpoint
         await fly_to_relative_position(uav=uav, rel_position_x=setpoint_x, rel_position_y=setpoint_y, relative_altitude=flight_altitude, wait_for_arrival=False)
@@ -100,7 +81,7 @@ async def main():
     camera.start()
 
     # Create an instance of the PIController
-    controller = PIController(kp=0.015, ki=0.001, dt=0.1)
+    controller = PIController(kp=0.5, ki=0.15, dt=0.1)
 
     flight_altitude = 3.0
     vertical_uncertainity = 0.3

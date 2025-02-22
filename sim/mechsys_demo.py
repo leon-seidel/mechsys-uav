@@ -6,10 +6,9 @@ from gz_cam import GZCamera
 import detector
 from pi_controller import PIController 
 from localizer import pixel_to_ground
-
+import config
 
 async def run_mission(controller, uav, camera, flight_altitude):
-
     while True:
         # Get current position
         current_altitude = uav.get_position()[2]
@@ -25,7 +24,7 @@ async def run_mission(controller, uav, camera, flight_altitude):
             continue
         
         # Calculate error in x and y directions
-        error_x, error_y = pixel_to_ground(center_position[0], center_position[1], current_altitude)
+        error_x, error_y = pixel_to_ground(center_position[0], center_position[1], current_altitude, camera.K)
         print(f"  PI Controller Error: {error_x:.2f}, {error_y:.2f}")
 
         # Update the controller with the current errors to get the setpoints
@@ -81,10 +80,7 @@ async def main():
     camera.start()
 
     # Create an instance of the PIController
-    controller = PIController(kp=0.5, ki=0.15, dt=0.1)
-
-    flight_altitude = 3.0
-    vertical_uncertainity = 0.3
+    controller = PIController(kp=config.pid_p, ki=config.pid_i, dt=config.pid_dt)
 
     # Wait for connection
     await asyncio.sleep(2)
@@ -94,7 +90,7 @@ async def main():
     
     # Takeoff
     while True:
-        success = await takeoff(uav, takeoff_altitude=flight_altitude, vertical_uncertainity=vertical_uncertainity)
+        success = await takeoff(uav, takeoff_altitude=config.flight_altitude, vertical_uncertainity=config.vertical_uncertainity)
         if success:
             break
         else:
@@ -105,7 +101,7 @@ async def main():
     await asyncio.sleep(2)
 
     # Run the mission
-    await run_mission(controller, uav, camera, flight_altitude)
+    await run_mission(controller, uav, camera, config.flight_altitude)
 
     # Hover for 2 seconds
     await asyncio.sleep(2)

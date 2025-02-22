@@ -41,6 +41,9 @@ class GZCamera:
         self._stop_event = threading.Event()
         self._latest_image = None
         self._thread = None
+        self.K = np.array([[152, 0,   160],
+                           [0,   152, 120],
+                           [0,   0,   1]])
 
     def _camera_loop(self):
         for img in read_camera_frames():

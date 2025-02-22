@@ -1,9 +1,4 @@
-import numpy as np
-
-def pixel_to_ground(u, v, altitude):
-    K = np.array([[152, 0,   160],
-                  [0,   152, 120],
-                  [0,   0,   1]])
+def pixel_to_ground(u, v, altitude, K):
     # Compute the offset of the pixel from the principal point
     u_prime = u - K[0, 2]
     v_prime = v - K[1, 2]

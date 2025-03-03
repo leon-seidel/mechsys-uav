@@ -25,7 +25,7 @@ class UAV():
         self.__system = None
 
     @classmethod
-    async def connect(cls, serial_device='/dev/ttyS0', serial_baud=57600, use_sim=False, udp_port=14541):
+    async def connect(cls, serial_device='/dev/ttyS0', serial_baud=57600, use_sim=False, udp_port=14540):
         self = cls()
         self.__system = System()
         # Init position and wait for home position

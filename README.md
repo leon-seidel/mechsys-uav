@@ -20,6 +20,7 @@ Allow UART/USB port communication with `sudo usermod -a -G dialout $USER`.
 #### Simulation
 Start SITL simulation with:
 ```sh
+cd ~/PX4-Autopilot/
 make px4_sitl gz_x500_mono_cam_baylands
 ```
 

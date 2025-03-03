@@ -27,7 +27,7 @@ make px4_sitl gz_x500_mono_cam_baylands
 In QGroundControl build an inclusion fence and save the file to `evolonic_ros2_ws/src/mechsys/flight_zones/flight_zone.plan`.
 
 ### Raspberry Pi to flight controller connection
-- USB-to-UART connector / UART cable
+- UART connector
 - PX4 parameter `MAV_1_CONFIG` must be set to the telem port used for the connection, usually `TELEM2`
 
 

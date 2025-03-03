@@ -1,8 +1,0 @@
-# Start with:
-make px4_sitl
-
-# Copter:
-PX4_GZ_MODEL_POSE="0,-2" PX4_GZ_WORLD=baylands PX4_SIM_MODEL=gz_x500_mono_cam_down ./build/px4_sitl_default/bin/px4 -i 1
-
-# Rover:
-PX4_GZ_WORLD=baylands  PX4_SIM_MODEL=gz_r1_rover ./build/px4_sitl_default/bin/px4 -i 2

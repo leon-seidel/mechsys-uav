@@ -80,6 +80,29 @@ cam.start()                     # Starting the camera feed
 cam.get_latest()                # Get the latest camera frame
 ```
 
+## Add rover to simulation
+To get the rover with the red cross replace the contents of `~/PX4-Autopilot/Tools/simulation/gz/models/r1_rover` with the files in `examples/r1_rover`.
+
+Then go to the PX4 folder and launch the copter simulation in the first terminal.
+```sh
+cd ~/PX4-Autopilot/
+make px4_sitl
+
+PX4_GZ_MODEL_POSE="0,-2" PX4_GZ_WORLD=baylands PX4_SIM_MODEL=gz_x500_mono_cam_down ./build/px4_sitl_default/bin/px4 -i 1
+```
+
+Wait until Gazebo is launched and start a second terminal for the rover:
+
+```sh
+cd ~/PX4-Autopilot/
+PX4_GZ_WORLD=baylands  PX4_SIM_MODEL=gz_r1_rover ./build/px4_sitl_default/bin/px4 -i 2
+```
+
+As the drone's UDP port changes slightly with a second vehicle set it to Port 14541 when connecting:
+```py
+from uav_node_mavsdk import UAV
+uav = await UAV.connect(use_sim=True, port=14541)
+```
 
 ## TODO:
 - Check flight mode for Hold: document

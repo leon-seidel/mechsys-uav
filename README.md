@@ -25,8 +25,6 @@ Install with:
 pip install git+https://github.com/leon-seidel/mechsys-uav.git
 ```
 
-On the Raspberry Pi allow UART/USB port communication with `sudo usermod -a -G dialout $USER`. 
-
 #### Simulation
 Start SITL simulation with:
 ```sh
@@ -34,13 +32,8 @@ cd ~/PX4-Autopilot/
 make px4_sitl gz_x500_mono_cam_baylands
 ```
 
-### Flight zones
-In QGroundControl build an inclusion fence and save the file to `evolonic_ros2_ws/src/mechsys/flight_zones/flight_zone.plan`.
-
 ### Raspberry Pi to flight controller connection
-- UART connector
-- PX4 parameter `MAV_1_CONFIG` must be set to the telem port used for the connection, usually `TELEM2`
-
+Build a connector from TELEM2 on the flight controller to UART ports on the Raspberry Pi, connecting RX->TX, TX->RX and Ground. Allow UART port communication with `sudo usermod -a -G dialout $USER`. The PX4 parameter `MAV_1_CONFIG` must be set to the telem port used for the connection, like `TELEM2`
 
 ## Usage
 Connect with the following with the `use_sim` flag or a `serial_port` and `serial_baud`:
@@ -114,8 +107,9 @@ from uav_node_mavsdk import UAV
 uav = await UAV.connect(use_sim=True, port=14541)
 ```
 
+### Flight zones (only for custom flight zones)
+In QGroundControl build an inclusion fence and save the file to `mechsys_uav/flight_zones/flight_zone.plan`.
+
 ## TODO:
 - Check flight mode for Hold: document
 - Check flight zone before takeoff
-- Try UART on Pi
-- 

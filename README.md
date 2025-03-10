@@ -8,6 +8,16 @@ This package includes a MAVSDK implementation for communication with a PX4 UAV o
 
 The setup part of this README is required for preparing the Raspberry Pi and flight controller, while the usage part explains how to use the Mechsys Python API.
 
+## System setup
+In Ubuntu 22.04 install PX4 SITL with the following commands:
+
+```sh
+git clone https://github.com/PX4/PX4-Autopilot.git --recursive
+bash ./PX4-Autopilot/Tools/setup/ubuntu.sh
+```
+
+Then follow the tutorial [here](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#ubuntu) to install QGroundControl.
+
 ## Setup
 ### Install 
 Install with:

@@ -70,6 +70,17 @@ To land the UAV use:
 goal_accepted = await uav.land()
 ```
 
+## Gazebo camera
+The `examples/gz_cam.py` script can be used to interface with the Gazebo camera's simulator. You can use it with:
+```py
+from gz_cam import GZCamera
+cam = GZCamera(show_image=True) # Setting show_image to True starts a live view window
+cam.start()                     # Starting the camera feed
+
+cam.get_latest()                # Get the latest camera frame
+```
+
+
 ## TODO:
 - Check flight mode for Hold: document
 - Check flight zone before takeoff

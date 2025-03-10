@@ -25,7 +25,7 @@ Install with:
 pip install git+https://github.com/leon-seidel/mechsys-uav.git
 ```
 
-Allow UART/USB port communication with `sudo usermod -a -G dialout $USER`. 
+On the Raspberry Pi allow UART/USB port communication with `sudo usermod -a -G dialout $USER`. 
 
 #### Simulation
 Start SITL simulation with:

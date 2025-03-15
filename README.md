@@ -5,6 +5,7 @@ This package includes a MAVSDK implementation for communication with a PX4 UAV o
 - Function calls to retrieve UAV attitude and position
 - Sending goal positions with desired location, altitude and heading
 - Rejection of goals outside a given flight zone and maximum altitude
+- Only allow sending commands to the drone when the flight mode is "Hold"
 
 The setup part of this README is required for preparing the Raspberry Pi and flight controller, while the usage part explains how to use the Mechsys Python API.
 
@@ -109,7 +110,3 @@ uav = await UAV.connect(use_sim=True, port=14541)
 
 ### Flight zones (only for custom flight zones)
 In QGroundControl build an inclusion fence and save the file to `mechsys_uav/flight_zones/flight_zone.plan`.
-
-## TODO:
-- Check flight mode for Hold: document
-- Check flight zone before takeoff

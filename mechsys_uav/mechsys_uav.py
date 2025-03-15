@@ -102,13 +102,19 @@ class UAV():
         if self.home_altitude is None:
             print("Rejected takeoff: No home altitude yet.")
             return False
-
-        if takeoff_altitude > self._max_relative_altitude:
-            print(f"Takeoff altitude higher than the allowed {self._max_relative_altitude:.1f} m.")
-            return False
         
         if not self.flight_mode_is_hold:
             print("Rejected takeoff: Not in flight mode Hold.")
+            return False
+
+        # Check if takeoff position and altitude is allowed
+        current_latitude, current_longitude, _ = self.get_position()
+        position_allowed, altitude_allowed = self.check_goal_position(current_latitude, current_longitude, takeoff_altitude)
+        if not position_allowed:
+            print("Rejected takeoff: Current position not in flight zone.")
+            return False
+        if not altitude_allowed:
+            print(f"Rejected takeoff: Altitude is higher than the allowed {self._max_relative_altitude:.1f} m.")
             return False
 
         try:

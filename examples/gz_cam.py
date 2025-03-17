@@ -7,7 +7,8 @@ import json
 
 def read_camera_frames():
     # Start the gz topic process
-    process = subprocess.Popen(['gz', 'topic', '--echo', '--topic', '/camera', '--json-output'],
+    topic = '/world/baylands/model/x500_mono_cam_down_1/link/camera_link/sensor/imager/image'
+    process = subprocess.Popen(['gz', 'topic', '--echo', '--topic', topic, '--json-output'],
                              stdout=subprocess.PIPE,
                              text=True)
     

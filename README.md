@@ -10,7 +10,14 @@ This package includes a MAVSDK implementation for communication with a PX4 UAV o
 The setup part of this README is required for preparing the Raspberry Pi and flight controller, while the usage part explains how to use the Mechsys Python API.
 
 ## System setup
-In Ubuntu 22.04 install PX4 SITL with the following commands:
+
+Use Ubuntu 22.04 and then install Git if not already available:
+```sh
+sudo apt update
+sudo apt install git-all
+```
+
+Then install PX4 SITL with the following commands
 
 ```sh
 git clone https://github.com/PX4/PX4-Autopilot.git --recursive

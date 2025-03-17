@@ -1,2 +1,3 @@
 shapely
 mavsdk
+haversine

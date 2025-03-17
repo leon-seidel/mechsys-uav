@@ -14,7 +14,7 @@ The setup part of this README is required for preparing the Raspberry Pi and fli
 Use Ubuntu 22.04 and then install Git if not already available:
 ```sh
 sudo apt update
-sudo apt install git-all
+sudo apt install git
 ```
 
 Then install PX4 SITL with the following commands

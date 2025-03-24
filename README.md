@@ -114,6 +114,11 @@ As the drone's UDP port changes slightly with a second vehicle set it to Port 14
 from uav_node_mavsdk import UAV
 uav = await UAV.connect(use_sim=True, port=14541)
 ```
+## Drone and image coordinate systems
+Image coordinate systems usually start in the top left corner of the image, while the drone coordinate system in a bottom down image lies in the center of the image. The x and y directions are also different as visualised here:
+![coordinate_systems](https://github.com/user-attachments/assets/0cef72b8-ed53-49f7-a8aa-3ef62f089e24)
 
-### Flight zones (only for custom flight zones)
+## Flight zones (only for custom flight zones)
 In QGroundControl build an inclusion fence and save the file to `mechsys_uav/flight_zones/flight_zone.plan`.
+
+

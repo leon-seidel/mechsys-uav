@@ -9,8 +9,6 @@ from mavsdk.telemetry import FlightMode
 class UAV():
     def __init__(self):
         # Get parameters
-        self._flight_zone_name = "flight_zone.plan"
-        self._flight_zone_file = files("mechsys_uav.flight_zones").joinpath(self._flight_zone_name)
         self._max_relative_altitude = 10.0
 
         # Init flight variables
@@ -21,13 +19,17 @@ class UAV():
         self.flight_mode_is_hold = False
 
         # Load fligth zone
-        self._flight_zone = self.load_fligth_zone()
+        self._flight_zone = None
         self.__system = None
 
     @classmethod
-    async def connect(cls, serial_device='/dev/ttyS0', serial_baud=57600, use_sim=False, udp_port=14540):
+    async def connect(cls, serial_device='/dev/ttyS0', serial_baud=57600, use_sim=False, udp_port=14540, flight_zone_name=None):
         self = cls()
         self.__system = System()
+        
+        # Load flight zone
+        self._flight_zone = self.load_fligth_zone(flight_zone_name=flight_zone_name, use_sim=use_sim)
+        
         # Init position and wait for home position
         await self.wait_for_connection(serial_device, serial_baud, use_sim, udp_port)
         await self.wait_for_home()
@@ -188,9 +190,16 @@ class UAV():
             position_allowed = False
         return position_allowed, altitude_allowed
     
-    def load_fligth_zone(self):
+    def load_fligth_zone(self, flight_zone_name=None, use_sim=True):
+        if flight_zone_name is None:
+            if use_sim:
+                flight_zone_name = "gazebo_baylands.plan"
+            else:
+                flight_zone_name = "techfak_wiese.plan"
+
+        flight_zone_file = files("mechsys_uav.flight_zones").joinpath(flight_zone_name)
         try:
-            with open(self._flight_zone_file, 'r') as f:
+            with open(flight_zone_file, 'r') as f:
                 data = json.load(f)
         except Exception as e:
             print(e)
@@ -205,7 +214,7 @@ class UAV():
                 polygon_point = [point[0], point[1]]
                 polygon_points.append(polygon_point)
             shapely_polygon = Polygon(polygon_points)
-            print(f"Flight zone loaded from file {self._flight_zone_name}, maximum relative altitude set to {self._max_relative_altitude:.1f} m.\n")
+            print(f"Flight zone loaded from file {flight_zone_name}, maximum relative altitude set to {self._max_relative_altitude:.1f} m.\n")
             return shapely_polygon
         else:
             raise ValueError("Either multiple inclusion zones or only exclusion zone(s) found in flight zones file.")

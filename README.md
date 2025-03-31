@@ -44,7 +44,8 @@ make px4_sitl gz_x500_mono_cam_baylands
 Build a connector from TELEM2 on the flight controller to UART ports on the Raspberry Pi, connecting RX->TX, TX->RX and Ground. Allow UART port communication with `sudo usermod -a -G dialout $USER`. The PX4 parameter `MAV_1_CONFIG` must be set to the telem port used for the connection, like `TELEM2`
 
 ## Usage
-Connect with the following with the `use_sim` flag or a `serial_port` and `serial_baud`:
+Connect with the following with the `use_sim` flag or a `serial_port` and `serial_baud`. It is also possible to set another UDP port for the simulation.
+The flight zone is automatically set for simulation (Gazebo baylands) and real world testing, other plans can be loaded with `flight_zone_name`.
 ```py
 from uav_node_mavsdk import UAV
 uav = await UAV.connect(use_sim=True)

@@ -41,6 +41,12 @@ make px4_sitl gz_x500_mono_cam_baylands
 ```
 
 ### Raspberry Pi to flight controller connection
+Enable serial port UART communication on the Pi with raspi-config: Go to Interface Options -> Serial Port and select the following before rebooting:
+
+Would you like a login shell to be accessible over the serial? - No
+
+Would you like the serial port hardware to be enabled? - Yes
+
 Build a connector from TELEM2 on the flight controller to UART ports on the Raspberry Pi, connecting RX->TX, TX->RX and Ground. Allow UART port communication with `sudo usermod -a -G dialout $USER`. The PX4 parameter `MAV_1_CONFIG` must be set to the telem port used for the connection, like `TELEM2`
 
 ## Usage

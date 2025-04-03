@@ -47,7 +47,7 @@ Would you like a login shell to be accessible over the serial? - No
 
 Would you like the serial port hardware to be enabled? - Yes
 
-Build a connector from TELEM2 on the flight controller to UART ports on the Raspberry Pi, connecting RX->TX, TX->RX and Ground. Allow UART port communication with `sudo usermod -a -G dialout $USER`. The PX4 parameter `MAV_1_CONFIG` must be set to the telem port used for the connection, like `TELEM2`
+Build a connector from TELEM2 on the flight controller to UART ports on the Raspberry Pi, connecting RX->TX, TX->RX and Ground. Allow UART port communication with `sudo usermod -a -G dialout $USER`. The PX4 parameter `MAV_1_CONFIG` must be set to the serial port used for the connection, like `GPS1` and the baud rate (e.g. `SER_GPS1_BAUD`) to 57600 8N1.
 
 ## Usage
 Connect with the following with the `use_sim` flag or a `serial_port` and `serial_baud`. It is also possible to set another UDP port for the simulation.

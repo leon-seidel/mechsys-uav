@@ -10,6 +10,7 @@ class UAV():
     def __init__(self):
         # Get parameters
         self._max_relative_altitude = 10.0
+        self._min_relative_altitude = 0.2
 
         # Init flight variables
         self.latitude, self.longitude, self.relative_altitude = None, None, None
@@ -183,7 +184,7 @@ class UAV():
         position_allowed, altitude_allowed = True, True
         goal_position = Point([latitude, longitude])
         # Check altitude restriction
-        if relative_altitude > self._max_relative_altitude:
+        if relative_altitude > self._max_relative_altitude or relative_altitude < self._min_relative_altitude:
             altitude_allowed = False
         # Check if goal position is within flight zone
         if not self._flight_zone.contains(goal_position):

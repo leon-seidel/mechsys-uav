@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mechsys-uav"
+version = "0.2.0"
+description = "PX4 UAV handling wrapper for Mechsys"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Leon Seidel" },
+]
+dependencies = [
+    "haversine",
+    "mavsdk",
+    "shapely==2.0.7",
+]
+
+[project.urls]
+Repository = "https://github.com/leon-seidel/mechsys-uav"
+
+[tool.setuptools]
+packages = ["mechsys_uav"]
+
+[tool.setuptools.package-data]
+mechsys_uav = ["flight_zones/*.plan"]
+
+[tool.uv]
+package = true

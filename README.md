@@ -11,10 +11,12 @@ The setup part of this README is required for preparing the Raspberry Pi and fli
 
 ## System setup
 
-Use Ubuntu 22.04 and then install Git if not already available:
+Use Ubuntu 22.04 or 24.04 and then install Git, Curl and uv if not already available:
 ```sh
 sudo apt update
-sudo apt install git
+sudo apt install git curl
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv init
 ```
 
 Then install PX4 SITL with the following commands
@@ -28,9 +30,13 @@ Then follow the tutorial [here](https://docs.qgroundcontrol.com/master/en/qgc-us
 
 ## Setup
 ### Install 
-Install with:
+Create a project that uses `mechsys-uav` as a dependency:
 ```sh
-pip install git+https://github.com/leon-seidel/mechsys-uav.git
+mkdir my-uav-project
+cd my-uav-project
+uv venv
+source .venv/bin/activate
+uv add git+https://github.com/leon-seidel/mechsys-uav.git
 ```
 
 #### Simulation
@@ -53,9 +59,11 @@ Build a connector from TELEM2 on the flight controller to UART ports on the Rasp
 Connect with the following with the `use_sim` flag or a `serial_port` and `serial_baud`. It is also possible to set another UDP port for the simulation.
 The flight zone is automatically set for simulation (Gazebo baylands) and real world testing, other plans can be loaded with `flight_zone_name`.
 ```py
-from uav_node_mavsdk import UAV
+from mechsys_uav import UAV
 uav = await UAV.connect(use_sim=True)
 ```
+
+Run your scripts from that project with `uv run`, for example `uv run python your_script.py`.
 
 You can then query the UAV's attitude in degrees:
 ```py
@@ -118,8 +126,8 @@ PX4_GZ_WORLD=baylands  PX4_SIM_MODEL=gz_r1_rover ./build/px4_sitl_default/bin/px
 
 As the drone's UDP port changes slightly with a second vehicle set it to Port 14541 when connecting:
 ```py
-from uav_node_mavsdk import UAV
-uav = await UAV.connect(use_sim=True, port=14541)
+from mechsys_uav import UAV
+uav = await UAV.connect(use_sim=True, udp_port=14541)
 ```
 ## Drone and image coordinate systems
 Image coordinate systems usually start in the top left corner of the image, while the drone coordinate system in a bottom down image lies in the center of the image. The x and y directions are also different as visualised here:

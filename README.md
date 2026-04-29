@@ -1,4 +1,4 @@
-# Mechsys 2025 Python API
+# Mechsys 2026 Python API
 This package includes a MAVSDK implementation for communication with a PX4 UAV or SITL simulation and offers a simple Python API that implements the following:
 
 - Simple connection to UAV or simulation via single command
@@ -16,7 +16,6 @@ Use Ubuntu 22.04 or 24.04 and then install Git, Curl and uv if not already avail
 sudo apt update
 sudo apt install git curl
 curl -LsSf https://astral.sh/uv/install.sh | sh
-uv init
 ```
 
 Then install PX4 SITL with the following commands
@@ -34,10 +33,13 @@ Create a project that uses `mechsys-uav` as a dependency:
 ```sh
 mkdir my-uav-project
 cd my-uav-project
+uv init --bare
 uv venv
 source .venv/bin/activate
 uv add git+https://github.com/leon-seidel/mechsys-uav.git
 ```
+
+If you are adding `mechsys-uav` to an existing uv project, run `uv add` from the directory that already contains `pyproject.toml`.
 
 #### Simulation
 Start SITL simulation with:

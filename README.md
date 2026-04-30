@@ -138,4 +138,41 @@ Image coordinate systems usually start in the top left corner of the image, whil
 ## Flight zones (only for custom flight zones)
 In QGroundControl build an inclusion fence and save the file to `mechsys_uav/flight_zones/flight_zone.plan`.
 
+# vl53l8cx driver
+## portable files
+- Core/Inc/vl53l8cx/ — all API / plugin / buffer headers
+- Core/Src/vl53l8cx/vl53l8cx_api.c, vl53l8cx.c, and the plugin .c files — these are platform-independent sensor logic
+
+## must be rewritten for RPi
+- vl53l8cx_platform.h
+- vl53l8cx_platform.c
+- main.c — only here for reference: power-on sequence, I2C address `0x52`, etc.
+
+## VL53L8CX good to knows
+
+### Power-on sequence
+1. Pull **PWREN** and **LPn** both LOW → wait 100 ms  (clears any hung sensor state)
+2. Set **PWREN** HIGH → wait 50 ms
+3. Set **LPn** HIGH → wait **250 ms** (critical: sensor internal boot)
+
+### I2C
+- Address: `0x52` (8-bit)
+- 16-bit register addressing (`I2C_MEMADD_SIZE_16BIT`)
+
+### Sensor configuration
+| Parameter | Value |
+|-----------|-------|
+| Resolution | 8×8 (64 zones) |
+| Ranging frequency | 10 Hz |
+
+### Output data (per frame)
+Each frame contains 64 zones, one entry per zone:
+- `distance_mm` — distance in mm
+- `signal_per_spad` — signal strength (uint32)
+- `target_status` — validity flag (5 = valid)
+
+## GPIO pins (STM32 reference — remap for RPi)
+<img width="595" height="953" alt="image" src="https://github.com/user-attachments/assets/c4f3f5c3-ae32-4021-9b31-404f009389a3" />
+
+
 

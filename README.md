@@ -21,7 +21,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 Then install PX4 SITL with the following commands
 
 ```sh
-git clone https://github.com/PX4/PX4-Autopilot.git --recursive
+git clone https://github.com/PX4/PX4-Autopilot.git --branch v1.16.1 --recursive
 bash ./PX4-Autopilot/Tools/setup/ubuntu.sh
 ```
 

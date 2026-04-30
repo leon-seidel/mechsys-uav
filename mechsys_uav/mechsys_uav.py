@@ -67,7 +67,7 @@ class UAV():
 
     async def wait_for_connection(self, serial_device, serial_baud, use_sim, udp_port):
         if use_sim:
-            system_address = f"udpin://:{udp_port}"
+            system_address = f"udpin://0.0.0.0:{udp_port}"
         else:
             system_address = f"serial://{serial_device}:{serial_baud}"
         
